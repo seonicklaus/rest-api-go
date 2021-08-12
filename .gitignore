@@ -9,3 +9,4 @@
 *.test
 
 rest-api-go
+posts.db
