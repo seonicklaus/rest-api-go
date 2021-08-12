@@ -86,3 +86,7 @@ func (*firestoreRepo) FindAll() ([]entity.Post, error) {
 func (*firestoreRepo) Delete(post *entity.Post) error {
 	return nil
 }
+
+func (*firestoreRepo) FindByID(id string) (*entity.Post, error) {
+	return nil, nil
+}

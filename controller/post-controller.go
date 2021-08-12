@@ -3,13 +3,16 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
+	"github.com/seonicklaus/rest-api-go/cache"
 	"github.com/seonicklaus/rest-api-go/entity"
 	"github.com/seonicklaus/rest-api-go/errors"
 	"github.com/seonicklaus/rest-api-go/service"
 )
 
 type PostController interface {
+	GetPostByID(w http.ResponseWriter, r *http.Request)
 	GetPosts(w http.ResponseWriter, r *http.Request)
 	AddPost(w http.ResponseWriter, r *http.Request)
 	DeletePost(w http.ResponseWriter, r *http.Request)
@@ -19,10 +22,12 @@ type controller struct{}
 
 var (
 	postService service.PostService
+	postCache   cache.PostCache
 )
 
-func NewPostController(service service.PostService) PostController {
+func NewPostController(service service.PostService, cache cache.PostCache) PostController {
 	postService = service
+	postCache = cache
 	return &controller{}
 }
 
@@ -37,6 +42,29 @@ func (*controller) GetPosts(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(posts)
+}
+
+func (*controller) GetPostByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	postID := strings.Split(r.URL.Path, "/")[2]
+
+	var post *entity.Post = postCache.Get(postID)
+
+	if post == nil {
+		post, err := postService.FindByID(postID)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(errors.ServiceError{Message: "No post found"})
+			return
+		}
+
+		postCache.Set(postID, post)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(post)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(post)
+	}
 }
 
 func (*controller) AddPost(w http.ResponseWriter, r *http.Request) {

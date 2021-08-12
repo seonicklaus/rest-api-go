@@ -129,3 +129,33 @@ func (*sqliteRepo) Delete(post *entity.Post) error {
 	tx.Commit()
 	return nil
 }
+
+func (*sqliteRepo) FindByID(id string) (*entity.Post, error) {
+	db, err := sql.Open("sqlite3", "./posts.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	row := db.QueryRow("SELECT id, title, txt FROM posts WHERE id = ?", id)
+	var post entity.Post
+
+	if row != nil {
+		var id int64
+		var title string
+		var text string
+
+		err := row.Scan(&id, &title, &text)
+		if err != nil {
+			return nil, err
+		} else {
+			post = entity.Post{
+				ID:    id,
+				Title: title,
+				Text:  text,
+			}
+		}
+
+	}
+
+	return &post, nil
+}

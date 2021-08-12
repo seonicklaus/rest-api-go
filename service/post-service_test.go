@@ -29,6 +29,12 @@ func (mock *MockRepository) Delete(post *entity.Post) error {
 	return args.Error(0)
 }
 
+func (mock *MockRepository) FindByID(id string) (*entity.Post, error) {
+	args := mock.Called()
+	result := args.Get(0)
+	return result.(*entity.Post), args.Error(1)
+}
+
 func TestFindAll(t *testing.T) {
 	mockRepo := new(MockRepository)
 	var identifier int64 = 1

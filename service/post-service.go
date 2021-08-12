@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"math/rand"
+	"strconv"
 
 	"github.com/seonicklaus/rest-api-go/entity"
 	"github.com/seonicklaus/rest-api-go/repository"
@@ -13,6 +14,7 @@ type PostService interface {
 	Create(post *entity.Post) (*entity.Post, error)
 	FindAll() ([]entity.Post, error)
 	Delete(post *entity.Post) error
+	FindByID(id string) (*entity.Post, error)
 }
 
 type service struct{}
@@ -50,4 +52,12 @@ func (*service) FindAll() ([]entity.Post, error) {
 
 func (*service) Delete(post *entity.Post) error {
 	return repo.Delete(post)
+}
+
+func (*service) FindByID(id string) (*entity.Post, error) {
+	_, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	return repo.FindByID(id)
 }
