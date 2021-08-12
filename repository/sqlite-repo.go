@@ -22,8 +22,8 @@ func NewSQLiteRepository() PostRepository {
 	defer db.Close()
 
 	sqlStmt := `
-	CREATE TABLE POSTS (id INTEGER NOT NULL PRIMARY KEY, title TEXT, txt TEXT);
-	delete from post;
+	CREATE TABLE posts (id INTEGER NOT NULL PRIMARY KEY, title TEXT, txt TEXT);
+	DELETE FROM posts;
 	`
 
 	_, err = db.Exec(sqlStmt)
