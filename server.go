@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"os"
 
 	"github.com/seonicklaus/rest-api-go/controller"
 	router "github.com/seonicklaus/rest-api-go/http"
@@ -18,12 +17,9 @@ var (
 )
 
 func main() {
-	const port = "8000"
-	httpRouter.GET("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Server has started...")
-	})
 	httpRouter.GET("/posts", postController.GetPosts)
 	httpRouter.POST("/posts", postController.AddPost)
 	httpRouter.DELETE("/posts", postController.DeletePost)
-	httpRouter.SERVE(port)
+
+	httpRouter.SERVE(os.Getenv("PORT"))
 }
