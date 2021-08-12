@@ -12,6 +12,7 @@ type PostService interface {
 	Validate(post *entity.Post) error
 	Create(post *entity.Post) (*entity.Post, error)
 	FindAll() ([]entity.Post, error)
+	Delete(post *entity.Post) error
 }
 
 type service struct{}
@@ -45,4 +46,8 @@ func (*service) Create(post *entity.Post) (*entity.Post, error) {
 
 func (*service) FindAll() ([]entity.Post, error) {
 	return repo.FindAll()
+}
+
+func (*service) Delete(post *entity.Post) error {
+	return repo.Delete(post)
 }

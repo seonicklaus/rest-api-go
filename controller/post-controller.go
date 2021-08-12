@@ -12,6 +12,7 @@ import (
 type PostController interface {
 	GetPosts(w http.ResponseWriter, r *http.Request)
 	AddPost(w http.ResponseWriter, r *http.Request)
+	DeletePost(w http.ResponseWriter, r *http.Request)
 }
 
 type controller struct{}
@@ -26,24 +27,26 @@ func NewPostController(service service.PostService) PostController {
 }
 
 func (*controller) GetPosts(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
 	posts, err := postService.FindAll()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error getting the posts"})
 	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(posts)
 }
 
 func (*controller) AddPost(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	var post entity.Post
 	err1 := json.NewDecoder(r.Body).Decode(&post)
+
 	if err1 != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error unmarshalling data"})
+		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error unmarshaling data"})
 		return
 	}
 	err2 := postService.Validate(&post)
@@ -59,6 +62,28 @@ func (*controller) AddPost(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error saving post"})
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
+}
+
+func (*controller) DeletePost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var post entity.Post
+
+	err := json.NewDecoder(r.Body).Decode(&post)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error unmarshaling data"})
+		return
+	}
+
+	err = postService.Delete(&post)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error deleting data"})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

@@ -15,14 +15,14 @@ const (
 	collectionName string = "posts"
 )
 
-type repo struct{}
+type firestoreRepo struct{}
 
 // Firestore Constructor
 func NewFirestoreRepository() PostRepository {
-	return &repo{}
+	return &firestoreRepo{}
 }
 
-func (*repo) Save(post *entity.Post) (*entity.Post, error) {
+func (*firestoreRepo) Save(post *entity.Post) (*entity.Post, error) {
 	ctx := context.Background()
 
 	client, err := firestore.NewClient(ctx, projectID)
@@ -47,7 +47,7 @@ func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 	return post, nil
 }
 
-func (*repo) FindAll() ([]entity.Post, error) {
+func (*firestoreRepo) FindAll() ([]entity.Post, error) {
 	ctx := context.Background()
 
 	client, err := firestore.NewClient(ctx, projectID)
@@ -80,4 +80,9 @@ func (*repo) FindAll() ([]entity.Post, error) {
 	}
 
 	return posts, nil
+}
+
+// Delete function :TODO
+func (*firestoreRepo) Delete(post *entity.Post) error {
+	return nil
 }
