@@ -9,6 +9,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/gorilla/mux v1.8.0
+	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
